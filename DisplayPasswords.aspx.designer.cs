@@ -7,13 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BrowserPasswordHacking
-{
-
-
-    public partial class DisplayPasswords
-    {
-
+namespace BrowserPasswordHacking {
+    
+    
+    public partial class DisplayPasswords {
+        
         /// <summary>
         /// form1 control.
         /// </summary>
@@ -22,7 +20,16 @@ namespace BrowserPasswordHacking
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-
+        
+        /// <summary>
+        /// ddlPasswordsType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPasswordsType;
+        
         /// <summary>
         /// btnReadPasswords control.
         /// </summary>
@@ -31,7 +38,7 @@ namespace BrowserPasswordHacking
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnReadPasswords;
-
+        
         /// <summary>
         /// gdResults control.
         /// </summary>
