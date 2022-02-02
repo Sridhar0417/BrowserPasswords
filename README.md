@@ -7,3 +7,7 @@
   # LoginsPath - Chrome saved username and passwords details
   # LoginsKeyPath - Chrome passwords decryption key
   # TempLoginPath - path to copy the original passwords file
+  
+  
+  
+  #Adding testing comment for demo purpose
